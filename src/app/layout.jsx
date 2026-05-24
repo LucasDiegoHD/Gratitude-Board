@@ -1,0 +1,35 @@
+import "./globals.css";
+import "mobile-drag-drop/default.css";
+
+export const metadata = {
+  title: "Gratitude Board — Team Brazil FGC",
+  description:
+    "Mural colaborativo de agradecimentos do Team Brazil — First Global Challenge. Compartilhe gratidão com seu time em tempo real.",
+  openGraph: {
+    title: "Gratitude Board — Team Brazil FGC",
+    description: "Mural de agradecimentos em tempo real do Team Brazil.",
+    type: "website",
+  },
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}

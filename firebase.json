@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "gratitudeboard-teambrazil",
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
