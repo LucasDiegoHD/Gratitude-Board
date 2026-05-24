@@ -355,7 +355,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
                         </span>
                       </h2>
                       <div 
-                        className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-8 sm:gap-7 items-start w-full px-2 sm:px-0"
+                        className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-16 sm:gap-x-7 sm:gap-y-14 items-start w-full px-2 sm:px-0"
                       >
                         {personNotes.map((note, index) => (
                           <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={() => setSelectedSticker(null)} removeNote={removeNote} />
@@ -367,7 +367,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
             ) : (
               /* Flat Notes grid */
               <div 
-                className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-8 sm:gap-7 items-start w-full px-2 sm:px-0"
+                className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-16 sm:gap-x-7 sm:gap-y-14 items-start w-full px-2 sm:px-0"
               >
                 {filteredNotes.map((note, index) => (
                   <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={() => setSelectedSticker(null)} removeNote={removeNote} />
