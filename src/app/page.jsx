@@ -381,7 +381,6 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
                   aria-label="Adicionar novo agradecimento"
                   className="group relative flex flex-col items-center justify-center transition-all duration-300 hover:z-10 cursor-pointer w-full max-w-[280px] mx-auto sm:max-w-none p-[18px] pb-[14px] min-h-[170px]"
                   style={{
-                    aspectRatio: "1 / 1",
                     backgroundColor: "rgba(255,255,255,0.03)",
                     backdropFilter: "blur(6px)",
                     WebkitBackdropFilter: "blur(6px)",

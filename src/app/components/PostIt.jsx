@@ -201,7 +201,6 @@ export default function PostIt({ note, index, isModal = false, selectedSticker, 
             transform: `rotate(${rotation}deg)`,
             transition:
               "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease",
-            aspectRatio: "1 / 1",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
