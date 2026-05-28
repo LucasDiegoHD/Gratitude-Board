@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import confetti from "canvas-confetti";
 
 const COLORS = [
   { id: "yellow", bg: "#F1BB01", label: "Amarelo" },
@@ -29,7 +28,8 @@ export default function AddNoteModal({ onClose, onSubmit }) {
 
   const isValid = to.trim() !== "" && message.trim() !== "";
 
-  const fireConfetti = () => {
+  const fireConfetti = async () => {
+    const { default: confetti } = await import("canvas-confetti");
     const teamColors = ["#F1BB01", "#54A158", "#58D85E", "#ffffff", "#014627"];
     const shared = {
       particleCount: 60,

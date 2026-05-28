@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { useReactions } from "@/lib/useReactions";
 import { useStickers } from "@/lib/useStickers";
 
@@ -45,7 +45,7 @@ const CATEGORIES = {
 
 
 
-export default function PostIt({ note, index, isModal = false, selectedSticker, onStickerPlaced, removeNote }) {
+const PostIt = memo(function PostIt({ note, index, isModal = false, selectedSticker, onStickerPlaced, removeNote, onOpenComments }) {
   let colors = COLOR_MAP[note.color] || COLOR_MAP["yellow"];
   const categoryInfo = CATEGORIES[note.category] || CATEGORIES["general"];
   const cardRef = useRef(null);
@@ -253,28 +253,7 @@ export default function PostIt({ note, index, isModal = false, selectedSticker, 
             }}
           />
 
-          {/* Botão de Excluir (Apenas para o dono do post-it) */}
-          {isOwner && removeNote && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (window.confirm("Tem certeza que deseja apagar este agradecimento?")) {
-                  removeNote(note.id);
-                }
-              }}
-              className="absolute bottom-3 right-3 opacity-60 hover:opacity-100 transition-all duration-300 z-50 bg-[#E54D42] text-white hover:bg-[#B83A31] rounded flex items-center justify-center gap-1.5 shadow-md hover:scale-105"
-              style={{
-                fontSize: "10px",
-                padding: "3px 8px",
-                fontFamily: "var(--font-barlow-condensed)",
-                fontWeight: "bold",
-                letterSpacing: "0.05em",
-              }}
-              title="Apagar meu post-it"
-            >
-              <span style={{ fontSize: "11px" }}>🗑️</span> APAGAR
-            </button>
-          )}
+          {/* Botão de excluir movido para o rodapé */}
 
           {/* Conteúdo */}
           <div>
@@ -357,17 +336,70 @@ export default function PostIt({ note, index, isModal = false, selectedSticker, 
 
           {/* De */}
           <div
-            className="mt-4 pt-2 flex items-center gap-2"
-            style={{ borderTop: `1.5px solid ${colors.accent}` }}
+            className="mt-4 pt-2 flex items-center min-w-0"
+            style={{
+              borderTop: `1.5px solid ${colors.accent}`,
+              paddingRight: (isOwner && removeNote && !isModal) ? "98px" : (!isModal && onOpenComments ? "56px" : "0px"),
+            }}
           >
-            <span style={{ fontSize: "16px", opacity: 0.7 }}>✍️</span>
+            <span style={{ fontSize: "16px", opacity: 0.7, marginRight: "8px", flexShrink: 0 }}>✍️</span>
             <p
-              className="font-barlow-condensed font-bold uppercase tracking-wider"
+              className="font-barlow-condensed font-bold uppercase tracking-wider truncate flex-1 min-w-0"
               style={{ fontSize: "15px", opacity: 0.95 }}
             >
               {note.from}
             </p>
           </div>
+
+          {/* Botão de Excluir Notas (Lixeira com posição absoluta fixa no post-it) */}
+          {isOwner && removeNote && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm("Tem certeza que deseja apagar este agradecimento?")) {
+                  removeNote(note.id);
+                }
+              }}
+              className="absolute bottom-[12px] right-[68px] opacity-60 hover:opacity-100 transition-all duration-300 bg-[#E54D42] text-white hover:bg-[#B83A31] rounded flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 z-40"
+              style={{
+                fontSize: "12px",
+                lineHeight: 1,
+                cursor: "pointer",
+                border: "none",
+                width: "28px",
+                height: "28px",
+              }}
+              title="Apagar meu post-it"
+            >
+              🗑️
+            </button>
+          )}
+
+          {/* Botão de Comentários (Posição absoluta fixa no post-it) */}
+          {!isModal && onOpenComments && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenComments(note);
+              }}
+              className="absolute bottom-[12px] right-[18px] flex items-center gap-1.5 py-0.5 px-2 rounded hover:bg-black/10 hover:scale-110 active:scale-95 transition-all duration-200 z-40"
+              style={{
+                fontFamily: "var(--font-barlow-condensed)",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: colors.text,
+                opacity: 0.8,
+                cursor: "pointer",
+                border: "none",
+                backgroundColor: "transparent",
+                height: "28px",
+              }}
+              title="Ver e adicionar comentários"
+            >
+              <span>💬</span>
+              <span>{note.comments ? Object.keys(note.comments).length : 0}</span>
+            </button>
+          )}
 
           {/* Adesivos Colados */}
           {stickers.map((stk) => (
@@ -467,6 +499,7 @@ export default function PostIt({ note, index, isModal = false, selectedSticker, 
       </div>
     </div>
   );
-}
+});
 
+export default PostIt;
 export { COLOR_MAP };

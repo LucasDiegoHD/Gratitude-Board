@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNotes } from "@/lib/useNotes";
-import PostIt from "./components/PostIt";
-import AddNoteModal from "./components/AddNoteModal";
 import TeamBrShield from "./components/TeamBrShield";
 import StickerPalette from "./components/StickerPalette";
 import DrawingCanvas from "./components/DrawingCanvas";
 import EmptyBoard from "./components/EmptyBoard";
+import PostIt from "./components/PostIt";
+import dynamic from "next/dynamic";
+
+const AddNoteModal = dynamic(() => import("./components/AddNoteModal"), { ssr: false });
+const CommentsModal = dynamic(() => import("./components/CommentsModal"), { ssr: false });
 
 const CATEGORY_SEARCH_MAP = {
   general: "geral",
@@ -40,6 +43,13 @@ export default function GratitudeBoardPage() {
   const [groupBy, setGroupBy] = useState("none");
   const [drawingTool, setDrawingTool] = useState("none"); // "none" | "pencil" | "eraser"
   const [selectedSticker, setSelectedSticker] = useState(null);
+  const [activeCommentsNote, setActiveCommentsNote] = useState(null);
+
+  const handleStickerPlaced = useCallback(() => setSelectedSticker(null), []);
+
+  const currentCommentsNote = activeCommentsNote 
+    ? notes.find((n) => n.id === activeCommentsNote.id) || activeCommentsNote
+    : null;
 
   const filteredNotes = notes.filter((note) => {
     const query = searchQuery.toLowerCase().trim();
@@ -68,6 +78,16 @@ export default function GratitudeBoardPage() {
     }
     prevCount.current = notes.length;
   }, [notes.length]);
+
+  // Fecha o modal de comentários automaticamente caso a nota seja deletada por outra pessoa
+  useEffect(() => {
+    if (activeCommentsNote && notes.length > 0) {
+      const noteExists = notes.some((n) => n.id === activeCommentsNote.id);
+      if (!noteExists) {
+        setActiveCommentsNote(null);
+      }
+    }
+  }, [notes, activeCommentsNote]);
 
   const handleAddNote = async (noteData) => {
     await addNote(noteData);
@@ -358,7 +378,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
                         className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-16 sm:gap-x-7 sm:gap-y-14 items-start w-full px-2 sm:px-0"
                       >
                         {personNotes.map((note, index) => (
-                          <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={() => setSelectedSticker(null)} removeNote={removeNote} />
+                          <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={handleStickerPlaced} removeNote={removeNote} onOpenComments={setActiveCommentsNote} />
                         ))}
                       </div>
                     </div>
@@ -370,7 +390,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
                 className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-16 sm:gap-x-7 sm:gap-y-14 items-start w-full px-2 sm:px-0"
               >
                 {filteredNotes.map((note, index) => (
-                  <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={() => setSelectedSticker(null)} removeNote={removeNote} />
+                  <PostIt key={note.id} note={note} index={index} selectedSticker={selectedSticker} onStickerPlaced={handleStickerPlaced} removeNote={removeNote} onOpenComments={setActiveCommentsNote} />
                 ))}
 
                 {/* Add slot */}
@@ -555,6 +575,14 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...`}
 
       {/* ── PALETA DE ADESIVOS ────────────────────────────── */}
       <StickerPalette selectedSticker={selectedSticker} onSelectSticker={setSelectedSticker} />
+
+      {/* ── MODAL DE COMENTÁRIOS ────────────────────────── */}
+      {currentCommentsNote && (
+        <CommentsModal
+          note={currentCommentsNote}
+          onClose={() => setActiveCommentsNote(null)}
+        />
+      )}
     </div>
   );
 }

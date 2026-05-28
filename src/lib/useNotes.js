@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { db } from "./firebase";
 import { ref, onValue, push, serverTimestamp, query, orderByChild, startAt, remove } from "firebase/database";
 
@@ -57,7 +57,7 @@ export function useNotes(filterType = "recent") {
     return () => unsubscribe();
   }, [filterType]);
 
-  const addNote = async ({ to, message, from, color, category }) => {
+  const addNote = useCallback(async ({ to, message, from, color, category }) => {
     if (!db) {
       console.warn("Firebase não disponível — nota não salva.");
       return;
@@ -85,13 +85,13 @@ export function useNotes(filterType = "recent") {
       category: category || "general",
       createdAt: serverTimestamp(),
     });
-  };
+  }, []);
 
-  const removeNote = async (noteId) => {
+  const removeNote = useCallback(async (noteId) => {
     if (!db) return;
     const noteRef = ref(db, `sessions/${SESSION_ID}/notes/${noteId}`);
     await remove(noteRef);
-  };
+  }, []);
 
   return { notes, loading, error, addNote, removeNote };
 }
